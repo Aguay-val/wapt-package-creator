@@ -4,7 +4,7 @@ WAPT-Package-Creator
 Script WAPT pour créer et uploader des paquets depuis linux sur un serveur WAPT.
 
 
-- [English version](https://github.com/Aguay-val/wapt-container/blob/master/README-en.md)
+- [English version](https://github.com/Aguay-val/wapt-package-creator/blob/master/README-en.md)
 - [WAPT Késako  ?](#wapt-késako)
 - [Why this repo ?](#why-this-repo)
 - [How to use it ?](#how-to-use-it)
