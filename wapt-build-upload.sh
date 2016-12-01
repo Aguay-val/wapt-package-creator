@@ -193,10 +193,19 @@ do
 done
 
 create_http_token
-list_files_directory > "${TEMP_FILE}"
-create_manifest_sha1 > WAPT/manifest.sha1
-sign_manifest > WAPT/signature
-
+# Vérification du dossier en cours
+if [ ! -e setup.py ]; then
+  printf "Error! Missing \"setup.py\"\nAre you in the wapt-package folder ?\n"
+  echo "--------------------------------------------------------"
+  echo "Current Folder : ${PWD}"
+  echo "--------------------------------------------------------"
+  read -p "Is this the right path ? (y/n) : " answer
+  if [[ $answer =~ [nN] ]]; then
+    read -p  "What is the correct path ? (press enter when finish): " package_path
+    cd ${package_path}
+    ls
+  fi
+fi
 # Vérification de l'état du fichier "control" et si il n'est pas bon alors on le génère.
 if [ -e WAPT/control ]; then
   if [ "`cat WAPT/control | wc -l`" -lt "9" ]; then
@@ -207,17 +216,30 @@ if [ -e WAPT/control ]; then
     cat  WAPT/control
     echo "--------------------------------------------------------"
     read -p "Is the content of WAPT/control ok? (y/n) : " answer
-    echo $answer
     if [[ $answer =~ [nN] ]]; then # Test if var is empty
       control_file_gen
     else
       get_control_value
     fi
   fi
+else
+  control_file_gen
 fi
 
+# If there is not wapt.psproj file then download it from github repo
+if [ ! -e WAPT/wapt.psproj ]; then
+  wget ${URL_WAPT_PSPROJ} -o WAPT/wapt.psproj
+fi
+printf "\n List files from the directory\n"
+list_files_directory | tee  "${TEMP_FILE}"
+printf "\n Creation of \"manifest.sha1\"\n"
+create_manifest_sha1 > WAPT/manifest.sha1
+sed -i 'x; ${s/,//;p;x}; 1d' WAPT/manifest.sha1
+printf "\n File signature of manifest.sha1 with ${PRIVATE_KEY}\n"
+sign_manifest > WAPT/signature
+printf "\n Zipping folder as <wapt>.wapt\n"
 zip_to_wapt
 upload_package "${PACKAGE_package}_${PACKAGE_version}_${PACKAGE_architecture}"
-
-
 rm -f "${TEMP_FILE}"
+
+printf "\n Package have been build and uploaded \n \n"
