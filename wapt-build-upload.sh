@@ -74,8 +74,6 @@ create_manifest_sha1() {
     fi
   done < "${TEMP_FILE}"
   printf "]"
-  ## On enlève la virgule à l'avant dernière ligne.
-  sed -ni "x;${s/,$//;p;x}; 2,$ p" WAPT/manifest.sha1
   unset lines
 }
 
@@ -234,6 +232,7 @@ printf "\n List files from the directory\n"
 list_files_directory | tee  "${TEMP_FILE}"
 printf "\n Creation of \"manifest.sha1\"\n"
 create_manifest_sha1 > WAPT/manifest.sha1
+  ## On enlève la virgule à l'avant dernière ligne.
 sed -i 'x; ${s/,//;p;x}; 1d' WAPT/manifest.sha1
 printf "\n File signature of manifest.sha1 with ${PRIVATE_KEY}\n"
 sign_manifest > WAPT/signature
