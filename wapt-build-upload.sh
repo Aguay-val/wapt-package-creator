@@ -58,7 +58,7 @@ list_files_directory() {
 create_manifest_sha1() {
   printf "[\n"
   lines=""
-  while -r read lines
+  while read lines
   do
     line="$(sha1sum --tag "${lines}")"
     if ! [ -z "$line" ]; then
@@ -85,7 +85,7 @@ get_control_value () {
     for key in $CONTROL_VALUE
     do
       regex_get_control_value="(^${key})\s+:\s(.*)"
-      while -r read lines
+      while  read lines
       do
         if ! [ -z "$lines" ]; then
           if [[ $lines =~ $regex_get_control_value ]]; then
@@ -116,7 +116,7 @@ zip_to_wapt () {
 ######################################################################
 upload_package () {
 
-  curl -X POST "https://${WAPT_URL}/upload_package/${1}.wapt" -F file=@"${1}".wapt -H 'Authorization: Basic ${AUTH_TOKEN}'
+  curl -X POST "https://${WAPT_URL}/upload_package/${1}.wapt" -F file=@"${1}".wapt -H "Authorization: Basic ${AUTH_TOKEN}"
 }
 
 ######################################################################P
@@ -132,15 +132,15 @@ create_http_token () {
 ######################################################################P
 control_file_gen () {
   # Init Default Var
-  local PACKAGE_package=""
-  local PACKAGE_version=""
-  local PACKAGE_architecture="all"
-  local PACKAGE_section="base"
-  local PACKAGE_priority="optional"
-  local PACKAGE_maintainer="$(id -n -u)"
-  local PACKAGE_description="A pretty and enhanced Description for ${PACKAGE_package}"
-  local PACKAGE_depends=""
-  local PACKAGE_sources=""
+  PACKAGE_package=""
+  PACKAGE_version=""
+  PACKAGE_architecture="all"
+  PACKAGE_section="base"
+  PACKAGE_priority="optional"
+  PACKAGE_maintainer="$(id -n -u)"
+  PACKAGE_description="A pretty and enhanced Description for ${PACKAGE_package}"
+  PACKAGE_depends=""
+  PACKAGE_sources=""
   get_control_value
 
   for value in $CONTROL_VALUE
@@ -242,4 +242,4 @@ zip_to_wapt
 upload_package "${PACKAGE_package}_${PACKAGE_version}_${PACKAGE_architecture}"
 rm -f "${TEMP_FILE}"
 
-printf "\n Package have been build and uploaded \n \n"
+printf "\n Package have been build and uploaded \n \n"
