@@ -226,7 +226,7 @@ fi
 
 # If there is not wapt.psproj file then download it from github repo
 if [ ! -e WAPT/wapt.psproj ]; then
-  wget ${URL_WAPT_PSPROJ} -o WAPT/wapt.psproj
+  wget ${URL_WAPT_PSPROJ} -O WAPT/wapt.psproj
 fi
 printf "\n List files from the directory\n"
 list_files_directory | tee  "${TEMP_FILE}"
